@@ -105,7 +105,8 @@ Self join comes to save the day, as if the join was with any other table:
 ~~~~
 SELECT e.employee_id, e.first_name, e.job_title, m.first_name as manager
 FROM sql_hr.employees as e
-JOIN sql_hr.employees as m ON e.reports_to = m.employee_id;
+JOIN sql_hr.employees as m
+ON e.reports_to = m.employee_id;
 ~~~~
 
 Result:
@@ -145,3 +146,35 @@ Notice this is a very good example of inner join as poor Yovonnda is also an emp
 ~~~~
 
 If we wanted Yovonnda on the picture we'd have to use RIGHT JOIN instead of just JOIN as the latter is implicitly an INNER JOIN.
+
+## Multiple Tables JOIN
+
+Join orders, customers and order_statuses tables:
+
+~~~~
+SELECT  o.order_id,
+        o.order_date,
+        c.first_name,
+        c.last_name, 
+        s.name AS status
+FROM orders o
+JOIN customers c
+    ON o.customer_id = c.customer_id
+JOIN order_statuses os
+    ON o.status = os.order_status_id
+~~~~
+
+Join payments, clients and payment_methods tables:
+
+~~~~
+SELECT p.date,
+       p.invoice_id,
+       p.amount,
+       c.name,
+       pm.name
+FROM payments p
+JOIN clients c
+    ON p.client_id = c.client_id
+JOIN payment_mathod pm
+    ON p.payment_method = pm.paymentd_method_id
+~~~~
