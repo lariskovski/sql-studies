@@ -20,9 +20,9 @@ A table is how data is organized in rows and columns. Each column is a property 
 
 [What is a database schema?](https://www.educative.io/blog/what-are-database-schemas-examples)
 
-## The Basics: SQL 101
+# SQL 101: The Basics
 
-### Getting To Know The Territory
+## Getting To Know The Territory
 
 Few commands to know where to look when using the dark scary world of CLI.
 
@@ -68,7 +68,7 @@ mysql> show tables;
 7 rows in set (0.15 sec)
 ~~~~
 
-#### Statements vs Clauses
+## Statements vs Clauses
 
 The following statement:
 
@@ -81,11 +81,11 @@ is made up of the following clauses:
 - FROM bar
 - JOIN quux
 
-### SELECT Clause
+## SELECT Clause
 
 Retrieve data.
 
-#### Pro Tip: Number of Rows and Columns
+## Pro Tip: Number of Rows and Columns
 
 Get the total number of entries/rows on a given table:
 
@@ -95,26 +95,26 @@ Get all the columns in a given table:
 
 ``SELECT * FROM items LIMIT 1;``
 
-#### New Output Column
+## New Output Column
 
 Can perform operations and use AS to add alias to add a new column on output although it can be used to just give an existing column a prettier name.
 
 ``SELECT item, price, price / 1.1 AS 10_discount_price FROM items;``
 
-#### Distinct Values
+## Distinct Values
 
 Returns all values without repetition; aka unique values.
 
 ``SELECT name, age, DISTINCT state FROM items``
 
 
-### WHERE Clause
+## WHERE Clause
 
 Filter data.
 
 ``SELECT name, birth_date FROM customers WHERE birth_date >= '1990-01-01';``
 
-#### Comparition Operators
+## Comparition Operators
 
 Available comparition operators for the WHERE clause:
 
@@ -126,7 +126,7 @@ The two last ones mean **not equal**.
 
 Both ``ny`` and ``NY`` give the same result. Which means WHERE is not case sensitive.
 
-#### Logical Operators
+## Logical Operators
 
 Logial operators: AND, OR, NOT
 
@@ -138,7 +138,7 @@ From order_items get the items  for order #6 where the total price is greater th
 
 ``select * from order_items where order_id = 6 and quantity * unit_price > 30;``
 
-#### IN Operator
+## IN Operator
 
 ``SELECT * FROM customers WHERE state IN ('va', 'ga', 'fl');``
 
@@ -146,13 +146,13 @@ With the IN operator it's possible o look for values in a list. Instead of:
 
 ``SELECT * FROM customers WHERE state = 'va OR state = 'ga' OR state = 'fl';``
 
-#### BETWEEN Operator
+## BETWEEN Operator
 
 Self explanatory.
 
 ``SELECT name, birth_date FROM customers WHERE birth_date BETWEEN '1990-01-01' AND '2000-01-01';``
 
-#### LIKE Operator
+## LIKE Operator
 
 When the comparition doesnt need to exact. The LIKE operator comes in hand.
 
@@ -160,7 +160,7 @@ Get all customers that live in an avenue or trail:
 
 ``SELECT name, address FROM customers WHERE address LIKE '%avenue%' OR address LIKE '%trail%';``
 
-#### REGEXP Operator
+## REGEXP Operator
 
 Like the LIKE operator but using regex.
 
@@ -180,11 +180,11 @@ Get name that start with any character then an ``a``:
 
 ``SELECT name, address FROM customers WHERE name REGEXP '_a';``
 
-#### IS NULL Operator
+## IS NULL Operator
 
 ``SELECT name, address FROM custumers WHERE address IS NOT NULL;``
 
-### ORDER
+## ORDER
 
 Get all items total cost in an order from highest to lowest price:
 
@@ -194,7 +194,7 @@ FROM items
 ORDER BY total_price DESC``
 ~~~~
 
-### LIMIT Clause
+## LIMIT Clause
 
 Limit the number of records returned from queries.
 
@@ -207,7 +207,7 @@ ORDER BY points DESC
 LIMIT 3;``
 ~~~~
 
-#### OFFSET
+## OFFSET
 
 We have the 10 items in a producsts table.
 
