@@ -26,13 +26,62 @@ A table is how data is organized in rows and columns. Each column is a property 
 
 Few commands to know where to look when using the dark scary world of CLI.
 
-``show databases;``
+Show all available databases:
 
-``use items;``
+~~~~
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| defaultdb          |
+| information_schema |
+| mysql              |
+| performance_schema |
+| sql_hr             |
+| sql_inventory      |
+| sql_invoicing      |
+| sql_store          |
+| sys                |
++--------------------+
+9 rows in set (0.14 sec)
+~~~~
 
-show tables;
+Select a database to use:
 
-### SELECT
+``use sql_store;``
+
+Show all tables on current database:
+
+~~~~
+mysql> show tables;
++---------------------+
+| Tables_in_sql_store |
++---------------------+
+| customers           |
+| order_item_notes    |
+| order_items         |
+| order_statuses      |
+| orders              |
+| products            |
+| shippers            |
++---------------------+
+7 rows in set (0.15 sec)
+~~~~
+
+#### Statements vs Clauses
+
+The following statement:
+
+``SELECT foo FROM bar JOIN quux WHERE x = y;``
+
+is made up of the following clauses:
+
+- WHERE x = y
+- SELECT foo
+- FROM bar
+- JOIN quux
+
+### SELECT Clause
 
 Retrieve data.
 
@@ -59,7 +108,7 @@ Returns all values without repetition; aka unique values.
 ``SELECT name, age, DISTINCT state FROM items``
 
 
-### WHERE
+### WHERE Clause
 
 Filter data.
 
@@ -89,7 +138,7 @@ From order_items get the items  for order #6 where the total price is greater th
 
 ``select * from order_items where order_id = 6 and quantity * unit_price > 30;``
 
-#### IN
+#### IN Operator
 
 ``SELECT * FROM customers WHERE state IN ('va', 'ga', 'fl');``
 
@@ -97,18 +146,145 @@ With the IN operator it's possible o look for values in a list. Instead of:
 
 ``SELECT * FROM customers WHERE state = 'va OR state = 'ga' OR state = 'fl';``
 
-#### BETWEEN
+#### BETWEEN Operator
 
 Self explanatory.
 
-#### LIKE
+``SELECT name, birth_date FROM customers WHERE birth_date BETWEEN '1990-01-01' AND '2000-01-01';``
 
-#### REGEXP
+#### LIKE Operator
 
-#### NULL
+When the comparition doesnt need to exact. The LIKE operator comes in hand.
 
-#### ORDER!
+Get all customers that live in an avenue or trail:
 
-#### LIMIT
+``SELECT name, address FROM customers WHERE address LIKE '%avenue%' OR address LIKE '%trail%';``
 
+#### REGEXP Operator
 
+Like the LIKE operator but using regex.
+
+``SELECT name, address FROM customers WHERE address REGEXP 'avenue|trail';``
+
+> Note: the default regexp search comes with "implicit" percentage signs around the string. And | (pipe) indicates OR operator
+
+Get customers which the name starts with ``L``:
+
+``SELECT name, address FROM customers WHERE name REGEXP '^L';``
+
+Get name that end in ``fa``, ``la`` and ``pa``:
+
+``SELECT name, address FROM customers WHERE name REGEXP '[flp]a$';``
+
+Get name that start with any character then an ``a``:
+
+``SELECT name, address FROM customers WHERE name REGEXP '_a';``
+
+#### IS NULL Operator
+
+``SELECT name, address FROM custumers WHERE address IS NOT NULL;``
+
+### ORDER
+
+Get all items total cost in an order from highest to lowest price:
+
+~~~~
+SELECT order_id, product_name, quantity, unit_price, quantity * unit_price AS total_price
+FROM items
+ORDER BY total_price DESC``
+~~~~
+
+### LIMIT Clause
+
+Limit the number of records returned from queries.
+
+Get the three costumers with more points:
+
+~~~~
+SELECT name, phone_number
+FROM custumers
+ORDER BY points DESC
+LIMIT 3;``
+~~~~
+
+#### OFFSET
+
+We have the 10 items in a producsts table.
+
+mysql> select * from products;
++------------+------------------------------+-------------------+------------+
+| product_id | name                         | quantity_in_stock | unit_price |
++------------+------------------------------+-------------------+------------+
+|          1 | Foam Dinner Plate            |                70 |       1.21 |
+|          2 | Pork - Bacon,back Peameal    |                49 |       4.65 |
+|          3 | Lettuce - Romaine, Heart     |                38 |       3.35 |
+|          4 | Brocolinni - Gaylan, Chinese |                90 |       4.53 |
+|          5 | Sauce - Ranch Dressing       |                94 |       1.63 |
+|          6 | Petit Baguette               |                14 |       2.39 |
+|          7 | Sweet Pea Sprouts            |                98 |       3.29 |
+|          8 | Island Oasis - Raspberry     |                26 |       0.74 |
+|          9 | Longan                       |                67 |       2.26 |
+|         10 | Broom - Push                 |                 6 |       1.09 |
++------------+------------------------------+-------------------+------------+
+10 rows in set (0.15 sec)
+
+Say in a web app when we need the a pagination with 3 items per page, like below:
+
+-- page 1:  1 - 3
+-- page 2:  4 - 6
+-- page 3:  7 - 9
+
+The app would have to go in the database using the three following statements:
+
+Get the first three elements with an offset of 0. Which means no items were 'skipped'.
+
+~~~~
+mysql> select * from products limit 0, 3;
++------------+---------------------------+-------------------+------------+
+| product_id | name                      | quantity_in_stock | unit_price |
++------------+---------------------------+-------------------+------------+
+|          1 | Foam Dinner Plate         |                70 |       1.21 |
+|          2 | Pork - Bacon,back Peameal |                49 |       4.65 |
+|          3 | Lettuce - Romaine, Heart  |                38 |       3.35 |
++------------+---------------------------+-------------------+------------+
+3 rows in set (0.15 sec)
+~~~~
+
+Then, skip the first three items and get three more.
+
+~~~~
+mysql> select * from products limit 3, 3;
++------------+------------------------------+-------------------+------------+
+| product_id | name                         | quantity_in_stock | unit_price |
++------------+------------------------------+-------------------+------------+
+|          4 | Brocolinni - Gaylan, Chinese |                90 |       4.53 |
+|          5 | Sauce - Ranch Dressing       |                94 |       1.63 |
+|          6 | Petit Baguette               |                14 |       2.39 |
++------------+------------------------------+-------------------+------------+
+3 rows in set (0.15 sec)
+~~~~
+
+Skip 6 items and get three  more. 
+
+~~~~
+mysql> select * from products limit 6, 3;
++------------+--------------------------+-------------------+------------+
+| product_id | name                     | quantity_in_stock | unit_price |
++------------+--------------------------+-------------------+------------+
+|          7 | Sweet Pea Sprouts        |                98 |       3.29 |
+|          8 | Island Oasis - Raspberry |                26 |       0.74 |
+|          9 | Longan                   |                67 |       2.26 |
++------------+--------------------------+-------------------+------------+
+~~~~
+
+So on, til the end is reached.
+
+~~~~
+mysql> select * from products limit 9, 3;
++------------+--------------+-------------------+------------+
+| product_id | name         | quantity_in_stock | unit_price |
++------------+--------------+-------------------+------------+
+|         10 | Broom - Push |                 6 |       1.09 |
++------------+--------------+-------------------+------------+
+1 row in set (0.15 sec)
+~~~~
