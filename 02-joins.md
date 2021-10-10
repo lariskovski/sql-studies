@@ -11,11 +11,11 @@ JOIN customers c
 ON o.customer_id = c.customer_id;
 ~~~~
 
-## Exercise
+### Exercise
 
-Join the order_items on sql_store db and products tables on sql_inventory db containing order id, product name quantity and unit price.
+Join the ``order_items`` on ``sql_store`` db and ``products`` table on ``sql_inventory`` db containing order id, product name quantity and unit price.
 
-Get all columns on order_items and products table:
+Get all columns on ``order_items`` and ``products`` table:
 
 ~~~~
 mysql> select * from order_items limit 1;
@@ -70,9 +70,9 @@ Result:
 +----------+------------+------------------------------+----------+------------+
 ~~~~
 
-### SELF JOIN
+## SELF JOIN
 
-Imgine you have the table below and needs to present it in a more human readable way. So instead of the reports_to column showing the name of the manager they report to istead of an id.
+Imagine you have the table below and needs to present it in a more human readable way. So instead of the ``reports_to`` column showing the name of the manager they report to istead of an id.
 
 ~~~~
 mysql> SELECT * FROM employees;
@@ -167,6 +167,7 @@ JOIN order_statuses os
 Join payments, clients and payment_methods tables:
 
 ~~~~
+use sql_invoicing;
 SELECT p.date,
        p.invoice_id,
        p.amount,
@@ -175,6 +176,12 @@ SELECT p.date,
 FROM payments p
 JOIN clients c
     ON p.client_id = c.client_id
-JOIN payment_mathod pm
-    ON p.payment_method = pm.paymentd_method_id
+JOIN payment_methods pm
+    ON p.payment_method = pm.payment_method_id;
 ~~~~
+
+## Compound JOIN Condition
+
+Compound JOINs are used on tables making use of Composite Primary Keys as the row's identifier.
+
+Let's compare a simple identifier and a composite one. On one hand we have a table called ``customers``, where the identifier is an id Primary Key column. On the other, we have the ``order_items`` table where both order_id and product_id are Primary Keys where neither are unique. In this scenario we cannot identify one entry by one column or another. We use both! The *composition* of order_id + product_id is unique.
